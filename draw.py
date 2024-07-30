@@ -27,30 +27,6 @@ async def get(id:int):
     color_picker = Input(type="color", id="color-picker", value="#000000")
     brush_size = Input(type="range", id="brush-size", min="1", max="50", value="10")
     save_button = Button("Save Canvas", id="save-canvas", hx_post=f"/rooms/{id}/save", hx_vals="js:{canvas_data: JSON.stringify(canvas.toJSON())}")
-
-    js = f"""
-    var canvas = new fabric.Canvas('canvas');
-    canvas.isDrawingMode = true;
-    canvas.freeDrawingBrush.color = '#000000';
-    canvas.freeDrawingBrush.width = 10;
-
-    // Load existing canvas data
-    fetch(`/rooms/{id}/load`)
-    .then(response => response.json())
-    .then(data => {{
-        if (data && Object.keys(data).length > 0) {{
-            canvas.loadFromJSON(data, canvas.renderAll.bind(canvas));
-        }}
-    }});
-    
-    document.getElementById('color-picker').onchange = function() {{
-        canvas.freeDrawingBrush.color = this.value;
-    }};
-    
-    document.getElementById('brush-size').oninput = function() {{
-        canvas.freeDrawingBrush.width = parseInt(this.value, 10);
-    }};
-    """
     
     return Titled(f"Room: {room.name}",
                   A(Button("Leave Room"), href="/"),
@@ -68,5 +44,20 @@ async def post(id:int, canvas_data:str):
 async def get(id:int):
     room = rooms[id]
     return room.canvas_data if room.canvas_data else "{}"
+
+import requests
+import time
+
+# Send the GET request
+response = requests.get('https://www.example.com')
+
+# Measure the elapsed time
+elapsed_time = response.elapsed
+print(f"Elapsed time: {elapsed_time}")
+
+# If you want to measure in seconds
+elapsed_seconds = elapsed_time.total_seconds()
+print(f"Elapsed time in seconds: {elapsed_seconds}")
+
 
 serve()
